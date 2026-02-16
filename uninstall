@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+DEST="${HOME}/.local/bin"
+CLIBC_TARGET="${DEST}/clibc"
+PWNINIT_TARGET="${DEST}/pwninit"
+
+if [[ -L "$CLIBC_TARGET" ]]; then
+  # 仅删除符号链接
+  rm -f -- "$CLIBC_TARGET"
+  echo "[*] Removed symlink: $CLIBC_TARGET"
+elif [[ -e "$CLIBC_TARGET" ]]; then
+  # 如果用户手动把它变成普通文件，这里保守处理：不直接删，提示用户
+  echo "[!] $CLIBC_TARGET exists but is not a symlink."
+  echo "    Refusing to delete it automatically."
+  echo "    Please inspect and remove manually if desired:"
+  echo "      ls -l \"$CLIBC_TARGET\""
+  exit 1
+else
+  echo "[*] Not installed: $CLIBC_TARGET does not exist."
+fi
+
+if [[ -L "$PWNINIT_TARGET" ]]; then
+  rm -f -- "$PWNINIT_TARGET"
+  echo "[*] Removed symlink: $PWNINIT_TARGET"
+elif [[ -e "$PWNINIT_TARGET" ]]; then
+  echo "[!] $PWNINIT_TARGET exists but is not a symlink."
+  echo "    Refusing to delete it automatically."
+  echo "    Please inspect and remove manually if desired:"
+  echo "      ls -l \"$PWNINIT_TARGET\""
+  exit 1
+else
+  echo "[*] Not installed: $PWNINIT_TARGET does not exist."
+fi
+
+# 可选：清理配置文件
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/clibc/config"
+if [[ -f "$CONF" ]]; then
+  rm -f -- "$CONF"
+  echo "[*] Removed config: $CONF"
+fi
+
+CONF_LOCAL="${ROOT}/etc/clibc.conf"
+if [[ -f "$CONF_LOCAL" ]]; then
+  rm -f -- "$CONF_LOCAL"
+  echo "[*] Removed local config: $CONF_LOCAL"
+fi
+
+echo "[*] Uninstall complete."

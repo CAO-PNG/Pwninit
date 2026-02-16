@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+resolve_self() {
+  local src="${BASH_SOURCE[0]}"
+  while [[ -L "$src" ]]; do
+    local dir
+    dir="$(cd -P -- "$(dirname -- "$src")" && pwd -P)"
+    src="$(readlink -- "$src")"
+    [[ "$src" != /* ]] && src="$dir/$src"
+  done
+  cd -P -- "$(dirname -- "$src")" && pwd -P
+}
+
+SCRIPT_DIR="$(resolve_self)"
+PWNINIT_ROOT="$(cd -P -- "$SCRIPT_DIR/.." && pwd -P)"
+
+# shellcheck source=/dev/null
+source "$PWNINIT_ROOT/lib/pwninit/core.sh"
+
+pwninit_main "$@"
