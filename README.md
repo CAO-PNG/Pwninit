@@ -14,11 +14,11 @@
   - 输出 checksec（多种 fallback）
   - 生成 `exp.py`
 - libc 切换：
-  - `--manual/-M`：目录扫描模式（原 D 模式）
-  - `--two/-W`：手动指定 `ld` 与 `libc`（原 L 模式）
+  - `--manual/-M`：目录扫描模式
+  - `--two/-W`：手动指定 `ld` 与 `libc`
   - `--ubuntu/-U`：从 Ubuntu 官方包提取
   - `--docker/-D`：从 Dockerfile 构建并提取库
-  - `<ver>`：glibc-all-in-one 模式（保留）
+  - `<ver>`：glibc-all-in-one 模式 不需要增加任何参数
 - 缓存机制：
   - Ubuntu 包缓存：`~/CTF_PWN/tools/glibc-all-in-one/Ubuntu_Download`
   - Docker 库缓存：`~/CTF_PWN/tools/glibc-all-in-one/Docker_Download`
@@ -84,7 +84,11 @@ pwninit ./chall
 ### 2) 初始化 + Ubuntu libc 切换
 
 ```bash
-pwninit ./chall -U 2.39
+pwninit ./chall -U 2.39 # 这是自己去Ubuntu官网下载
+```
+
+```bash
+pwninit ./chall 2.31 # 这是使用glibc-all-in-one的内部libc
 ```
 
 ### 3) 只执行 libc 切换
